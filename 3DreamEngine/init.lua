@@ -170,7 +170,7 @@ if love.graphics then
 	lib.skyObject = lib:loadObject(lib.root .. "/objects/sky", { ignoreMissingMaterials = true })
 	lib.cubeObject = lib:loadObject(lib.root .. "/objects/cube", { ignoreMissingMaterials = true })
 	lib.planeObject = lib:loadObject(lib.root .. "/objects/plane", { ignoreMissingMaterials = true })
-	
+
 	--default textures
 	local pix = love.image.newImageData(2, 2)
 	lib.textures = {
@@ -180,13 +180,13 @@ if love.graphics then
 		skyFallback = love.graphics.newCubeImage({ pix, pix, pix, pix, pix, pix }),
 	}
 	lib.textures.godray:setWrap("repeat", "repeat")
-	
+
 	lib.textures.noise = love.graphics.newImage(lib.root .. "/res/noise.png")
 	lib.textures.noise:setWrap("repeat")
-	
+
 	lib.textures.foam = love.graphics.newImage(lib.root .. "/res/foam.png")
 	lib.textures.foam:setWrap("repeat")
-	
+
 	--load textures once actually needed
 	lib.initTextures = { }
 	function lib.initTextures:PBR()
@@ -203,7 +203,7 @@ end
 function lib:resize(w, h)
 	w = w or love.graphics.getWidth()
 	h = h or love.graphics.getHeight()
-	
+
 	--canvases sets
 	self.canvases:init(w, h)
 	self.reflectionCanvases:init()
@@ -221,19 +221,19 @@ function lib:init(w, h)
 			love.window.updateMode(width, height, { depth = 16 })
 		end
 	end
-	
+
 	if self.autoExposure_enabled and self.canvases.mode == "direct" then
 		print("Autoexposure does not work with direct render! Autoexposure has been disabled.")
 		self:setAutoExposure(false)
 	end
-	
+
 	self:resize(w, h)
-	
+
 	self.canvasCache = { }
-	
+
 	--reset shader
 	self:loadShaders()
-	
+
 	--reset lighting
 	for _, l in pairs(self.lighting or { }) do
 		if l.shadow then
@@ -241,14 +241,14 @@ function lib:init(w, h)
 		end
 	end
 	self.lighting = { }
-	
+
 	--sky box
 	if self.defaultReflection == "sky" then
 		self.defaultReflectionCanvas = love.graphics.newCanvas(self.sky_resolution, self.sky_resolution, { format = self.sky_format, readable = true, msaa = 0, type = "cube", mipmaps = "manual" })
 	else
 		self.defaultReflectionCanvas = false
 	end
-	
+
 	self:initJobs()
 end
 
@@ -256,11 +256,11 @@ end
 function lib:prepare()
 	self.lighting = { }
 	self.renderTasks = { }
-	
+
 	--keep track of reflections
 	self.lastReflections = self.reflections or { }
 	self.reflections = { }
-	
+
 	--reset stats
 	self.stats.vertices = 0
 	self.stats.shaderSwitches = 0
@@ -291,7 +291,12 @@ function lib:draw(object, x, y, z, sx, sy, sz)
 			0, 0, 0, 1
 		})
 	end
-	
+
+  if type(object) ~= "table" then
+     dbg(object, x, y, z, sx, sy, sz)
+     debug.debug()
+  end
+
 	--add to scene
 	table.insert(self.renderTasks, { object, transform })
 end
