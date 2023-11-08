@@ -24,7 +24,7 @@ function lib:buildScene(shadowPass, dynamic, alpha, cam, blacklist, frustumCheck
 
   if #self.renderTasks ~= 6 then
      print(#self.renderTasks)
-     trace(1, self.renderTasks)
+     trace("buildScene-1", 2, self.renderTasks)
      debug.debug()
   end
 
@@ -35,7 +35,7 @@ function lib:buildScene(shadowPass, dynamic, alpha, cam, blacklist, frustumCheck
 			scene:addObject(pair[1], pair[2], true)
 		else
        if type(pair[1]) ~= "table" then
-          trace(1, self.renderTasks)
+          trace("buildScene-2", 2, self.renderTasks)
           debug.debug()
        end
 			scene:add(pair[1])

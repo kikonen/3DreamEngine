@@ -82,7 +82,7 @@ function class:addObject(object, parentTransform, dynamic)
 	end
 
   if type(object) ~= "table" then
-     trace(1, object, parentTransform, dynamic)
+     trace("addObject-1", 2, object, parentTransform, dynamic)
      debug.debug()
   end
 
@@ -132,14 +132,17 @@ function class:addObject(object, parentTransform, dynamic)
 	end
 
 	--children
-	for _, o in pairs(object.objects) do
+	for v, o in pairs(object.objects) do
+     if type(o) ~= "table" then
+        trace("addObject-2", 2, v, object)
+     end
 		self:addObject(o, transform, dynamic)
 	end
 
 	--meshes
-	for _, m in pairs(object.meshes) do
+	for v, m in pairs(object.meshes) do
      if type(m) ~= "table" then
-        trace(1, object, m)
+        trace("addObject-3", 2, object, v, m)
         --debug.debug()
      end
      self:addMesh(m, transform, object.reflection or lib.defaultReflection, scale)
@@ -165,7 +168,7 @@ function class:addMesh(mesh, transform, reflection, scale)
 	--not visible
 	if self.shadowPass then
      if type(mesh) ~= "table" then
-        trace(1, mesh, transform, reflection, scale)
+        trace("addMesh", 2, mesh, transform, reflection, scale)
         debug.debug()
      end
 		if mesh.material.alpha or not mesh.shadowVisibility or mesh.material.shadow == false then

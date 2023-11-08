@@ -293,7 +293,7 @@ function lib:draw(object, x, y, z, sx, sy, sz)
 	end
 
   if type(object) ~= "table" then
-     trace(1, object, x, y, z, sx, sy, sz)
+     trace("draw", 2, object, x, y, z, sx, sy, sz)
      debug.debug()
   end
 
