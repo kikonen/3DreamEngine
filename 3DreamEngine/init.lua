@@ -292,11 +292,6 @@ function lib:draw(object, x, y, z, sx, sy, sz)
 		})
 	end
 
-  if type(object) ~= "table" then
-     trace("draw", 2, object, x, y, z, sx, sy, sz)
-     debug.debug()
-  end
-
 	--add to scene
 	table.insert(self.renderTasks, { object, transform })
 end

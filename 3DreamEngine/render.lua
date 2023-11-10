@@ -22,22 +22,12 @@ function lib:buildScene(shadowPass, dynamic, alpha, cam, blacklist, frustumCheck
 	--use a scene here
 	local scene = self:newScene(shadowPass, dynamic, alpha, cam, blacklist, frustumCheck, canvases, light, isSun)
 
-  if #self.renderTasks ~= 6 then
-     print(#self.renderTasks)
-     trace("buildScene-1", 2, self.renderTasks)
-     debug.debug()
-  end
-
 	for _, pair in ipairs(self.renderTasks) do
 		if pair[1].isMesh then
 			scene:addMesh(pair[1], pair[2], lib.defaultReflection)
 		elseif pair[2] then
 			scene:addObject(pair[1], pair[2], true)
 		else
-       if type(pair[1]) ~= "table" then
-          trace("buildScene-2", 2, self.renderTasks)
-          debug.debug()
-       end
 			scene:add(pair[1])
 		end
 	end

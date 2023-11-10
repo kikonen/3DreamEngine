@@ -81,11 +81,6 @@ function class:addObject(object, parentTransform, dynamic)
 		return
 	end
 
-  if type(object) ~= "table" then
-     trace("addObject-1", 2, object, parentTransform, dynamic)
-     debug.debug()
-  end
-
 	if object.dynamic ~= nil then
 		dynamic = object.dynamic
 	end
@@ -132,19 +127,12 @@ function class:addObject(object, parentTransform, dynamic)
 	end
 
 	--children
-	for v, o in pairs(object.objects) do
-     if type(o) ~= "table" then
-        trace("addObject-2", 2, v, object)
-     end
+	for _, o in pairs(object.objects) do
 		self:addObject(o, transform, dynamic)
 	end
 
 	--meshes
-	for v, m in pairs(object.meshes) do
-     if type(m) ~= "table" then
-        trace("addObject-3", 2, object, v, m)
-        --debug.debug()
-     end
+	for _, m in pairs(object.meshes) do
      self:addMesh(m, transform, object.reflection or lib.defaultReflection, scale)
 	end
 end
@@ -155,22 +143,12 @@ end
 ---@param reflection DreamReflection @ optional
 ---@param scale number @ optional
 function class:addMesh(mesh, transform, reflection, scale)
-   if type(mesh) ~= "table" then
-      -- TODO KI *sometimes* plain float number appears instead of mesh
-      print("NOT A MESH", mesh, type(mesh))
-      return
-   end
-
 	if self.blacklist[mesh] then
 		return
 	end
 
 	--not visible
 	if self.shadowPass then
-     if type(mesh) ~= "table" then
-        trace("addMesh", 2, mesh, transform, reflection, scale)
-        debug.debug()
-     end
 		if mesh.material.alpha or not mesh.shadowVisibility or mesh.material.shadow == false then
 			return
 		end
