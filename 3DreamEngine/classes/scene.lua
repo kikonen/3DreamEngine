@@ -16,9 +16,9 @@ local lib = _3DreamEngine
 function lib:newScene(shadowPass, dynamic, alpha, cam, blacklist, frustumCheck, canvases, light, isSun)
 	---@type DreamScene
 	local m = setmetatable({ }, self.meta.scene)
-	
+
 	m.tasks = { }
-	
+
 	m.shadowPass = shadowPass
 	m.dynamic = dynamic
 	m.alpha = alpha
@@ -28,10 +28,10 @@ function lib:newScene(shadowPass, dynamic, alpha, cam, blacklist, frustumCheck, 
 	m.canvases = canvases
 	m.light = light
 	m.isSun = isSun
-	
+
 	--setting specific identifier
 	m.settingsIdentifier = self:getGlobalSettingsIdentifier(alpha, canvases, shadowPass, isSun)
-	
+
 	return m
 end
 
@@ -80,16 +80,16 @@ function class:addObject(object, parentTransform, dynamic)
 	if self.blacklist[object] then
 		return
 	end
-	
+
 	if object.dynamic ~= nil then
 		dynamic = object.dynamic
 	end
-	
+
 	--wrong dynamic layer
 	if self.dynamic ~= nil and self.dynamic ~= dynamic then
 		return
 	end
-	
+
 	--apply transformation
 	local transform
 	if parentTransform then
@@ -101,12 +101,12 @@ function class:addObject(object, parentTransform, dynamic)
 	else
 		transform = object.transform
 	end
-	
+
 	--store final world transform for potential later use cases
 	object.globalTransform = transform
-	
+
 	local scale = transform and transform:getLossySize() or 1
-	
+
 	--handle LOD
 	--todo lod should be mesh-related, with it's parent object as distance metric, pass a lazy distance metric
 	if object.LOD_min or object.LOD_max then
@@ -125,15 +125,15 @@ function class:addObject(object, parentTransform, dynamic)
 		end
 		--]]
 	end
-	
+
 	--children
 	for _, o in pairs(object.objects) do
 		self:addObject(o, transform, dynamic)
 	end
-	
+
 	--meshes
 	for _, m in pairs(object.meshes) do
-		self:addMesh(m, transform, object.reflection or lib.defaultReflection, scale)
+     self:addMesh(m, transform, object.reflection or lib.defaultReflection, scale)
 	end
 end
 
@@ -146,7 +146,7 @@ function class:addMesh(mesh, transform, reflection, scale)
 	if self.blacklist[mesh] then
 		return
 	end
-	
+
 	--not visible
 	if self.shadowPass then
 		if mesh.material.alpha or not mesh.shadowVisibility or mesh.material.shadow == false then
@@ -157,15 +157,15 @@ function class:addMesh(mesh, transform, reflection, scale)
 			return
 		end
 	end
-	
+
 	--wrong alpha
 	if (self.alpha and true) ~= (mesh.material.alpha and true) then
 		return
 	end
-	
+
 	--todo cache
 	local pos = getPosition(mesh, transform)
-	
+
 	--too small to be worth rendering
 	--todo
 	--[[
@@ -173,7 +173,7 @@ function class:addMesh(mesh, transform, reflection, scale)
 		return
 	end
 	--]]
-	
+
 	--not visible from current perspective
 	if self.frustumCheck and mesh.boundingSphere.size > 0 then
 		local size = mesh.boundingSphere.size * (scale or transform and transform:getLossySize() or 1)
@@ -182,13 +182,13 @@ function class:addMesh(mesh, transform, reflection, scale)
 			return false
 		end
 	end
-	
+
 	--todo here custom reflections (closest globe or default) and lights can be used
-	
+
 	local shader = lib:getRenderShader(mesh, reflection, self.settingsIdentifier, self.alpha, self.canvases, self.light, self.shadowPass, self.isSun)
-	
+
 	local dist = self.alpha and (pos - self.cam.position):lengthSquared() or 0
-	
+
 	--create task object
 	local task = setmetatable({
 		mesh,
@@ -198,7 +198,7 @@ function class:addMesh(mesh, transform, reflection, scale)
 		reflection,
 		dist
 	}, lib.meta.task)
-	
+
 	--add to list
 	self:addTo(task, shader, mesh.material)
 end
@@ -226,7 +226,7 @@ end
 function class:getIterator()
 	if self.alpha then
 		table.sort(self.tasks, sortFunction)
-		
+
 		local i = 0
 		return function()
 			i = i + 1
@@ -242,7 +242,7 @@ function class:getIterator()
 				end
 			end
 		end)
-		
+
 		return function()
 			local ok, task = coroutine.resume(co)
 			if ok then
